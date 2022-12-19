@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import laneboy.composition.R
 
-
 class GameFinishedFragment : Fragment() {
 
     override fun onCreateView(
