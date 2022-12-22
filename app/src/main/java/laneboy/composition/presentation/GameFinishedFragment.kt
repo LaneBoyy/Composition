@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.FragmentManager
 import laneboy.composition.databinding.FragmentGameFinishedBinding
 import laneboy.composition.domain.entity.GameResult
 
@@ -29,13 +31,37 @@ class GameFinishedFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    retryGame()
+                }
+            })
+        onClickRetryGame()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
     private fun parseArgs() {
-        gameResult = requireArguments().getSerializable(KEY_GAME_RESULT) as GameResult
+        requireArguments().getParcelable<GameResult>(KEY_GAME_RESULT)?.let {
+            gameResult = it
+        }
+    }
+
+    private fun onClickRetryGame() {
+        binding.buttonRetry.setOnClickListener {
+            retryGame()
+        }
+    }
+
+    private fun retryGame() {
+        requireActivity().supportFragmentManager
+            .popBackStack(GameFragment.NAME, FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 
     companion object {
@@ -45,7 +71,7 @@ class GameFinishedFragment : Fragment() {
         fun newInstance(gameResult: GameResult): GameFinishedFragment {
             return GameFinishedFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(KEY_GAME_RESULT, gameResult)
+                    putParcelable(KEY_GAME_RESULT, gameResult)
                 }
             }
         }
