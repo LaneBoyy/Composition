@@ -15,4 +15,5 @@
     <string name="text_need_percent">Необходимый процент правильных ответов: %s</string>
     <string name="test_percent_of_right_answers">Процент правильных ответов:\n%s</string>
     <string name="text_on_btn_retry">Попробовать снова</string>
+    <string name="progress_answers">Правильных ответов %s (минимум %s)</string>
 </resources>
