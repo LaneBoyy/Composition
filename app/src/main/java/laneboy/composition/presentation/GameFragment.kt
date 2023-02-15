@@ -1,5 +1,6 @@
 package laneboy.composition.presentation
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -55,6 +56,16 @@ class GameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeViewModel()
+        setClickListenersToOptions()
+        viewModel.startGame(level)
+    }
+
+    private fun setClickListenersToOptions() {
+        for (tvOption in tvOptions) {
+            tvOption.setOnClickListener {
+                viewModel.chooseAnswer(tvOption.text.toString().toInt())
+            }
+        }
     }
 
     private fun observeViewModel() {
@@ -69,19 +80,35 @@ class GameFragment : Fragment() {
             binding.progressBar.setProgress(it, true)
         }
         viewModel.enoughCount.observe(viewLifecycleOwner) {
-            val colorResid = if (it) {
-                android.R.color.holo_green_light
-            } else {
-                android.R.color.holo_red_light
-            }
-            val color = ContextCompat.getColor(requireContext(), colorResid)
-            binding.tvAnswersProgress.setTextColor(color)
+
+            binding.tvAnswersProgress.setTextColor(getColorByState(it))
         }
         viewModel.enoughPercent.observe(viewLifecycleOwner) {
-
+            val color = getColorByState(it)
+            binding.progressBar.progressTintList = ColorStateList.valueOf(color)
+        }
+        viewModel.formattedTime.observe(viewLifecycleOwner) {
+            binding.tvTimer.text = it
+        }
+        viewModel.minPercent.observe(viewLifecycleOwner) {
+            binding.progressBar.secondaryProgress = it
+        }
+        viewModel.gameResult.observe(viewLifecycleOwner) {
+            launchGameFinishedFragment(it)
+        }
+        viewModel.progressAnswers.observe(viewLifecycleOwner) {
+            binding.tvAnswersProgress.text = it
         }
     }
 
+    private fun getColorByState(goodState: Boolean): Int {
+        val colorResId = if (goodState) {
+            android.R.color.holo_green_light
+        } else {
+            android.R.color.holo_red_light
+        }
+        return ContextCompat.getColor(requireContext(), colorResId)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

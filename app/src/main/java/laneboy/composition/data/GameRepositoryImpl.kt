@@ -31,7 +31,7 @@ object GameRepositoryImpl : GameRepository {
         return when (level) {
             Level.TEST -> {
                 GameSettings(
-                    10, 3, 50, 10
+                    10, 3, 50, 5
                 )
             }
             Level.EASY -> {

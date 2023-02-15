@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.FragmentManager
+import laneboy.composition.R
 import laneboy.composition.databinding.FragmentGameFinishedBinding
 import laneboy.composition.domain.entity.GameResult
 
@@ -33,13 +34,58 @@ class GameFinishedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().onBackPressedDispatcher
-            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    retryGame()
-                }
-            })
-        onClickRetryGame()
+        setupClickListeners()
+        bindViews()
+    }
+
+    private fun bindViews() {
+        with(binding) {
+            ivEmojiResult.setImageResource(getSmileResId())
+            tvRequiredAnswers.text = String.format(
+                getString(R.string.text_count_of_needs_answers),
+                gameResult.gameSettings.minCountOfRightAnswers
+            )
+            tvScoreAnswers.text = String.format(
+                getString(R.string.text_your_score),
+                gameResult.countOfRightAnswers
+            )
+            tvRequiredPercentage.text = String.format(
+                getString(R.string.text_need_percent),
+                gameResult.gameSettings.minPercentRightAnswers
+            )
+            tvScorePercentage.text = String.format(
+                getString(R.string.test_percent_of_right_answers),
+                getPercentOfRightAnswers()
+            )
+        }
+    }
+
+    private fun getPercentOfRightAnswers() = with(gameResult) {
+        if (countOfRightAnswers == 0) {
+            0
+        } else {
+            ((countOfRightAnswers / countOfQuestions.toDouble()) * 100).toInt()
+        }
+    }
+
+    private fun getSmileResId(): Int {
+        return if (gameResult.winner) {
+            R.drawable.ic_smiling
+        } else {
+            R.drawable.ic_sad
+        }
+    }
+
+    private fun setupClickListeners() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                retryGame()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+        binding.buttonRetry.setOnClickListener {
+            retryGame()
+        }
     }
 
     override fun onDestroyView() {
@@ -50,12 +96,6 @@ class GameFinishedFragment : Fragment() {
     private fun parseArgs() {
         requireArguments().getParcelable<GameResult>(KEY_GAME_RESULT)?.let {
             gameResult = it
-        }
-    }
-
-    private fun onClickRetryGame() {
-        binding.buttonRetry.setOnClickListener {
-            retryGame()
         }
     }
 
