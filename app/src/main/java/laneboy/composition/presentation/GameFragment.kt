@@ -126,7 +126,7 @@ class GameFragment : Fragment() {
         val args = Bundle().apply {
             putParcelable(GameFinishedFragment.KEY_GAME_RESULT, gameResult)
         }
-        findNavController().navigate(R.id.action_chooseLevelFragment_to_gameFragment, args)
+        findNavController().navigate(R.id.action_gameFragment_to_gameFinishedFragment, args)
     }
 
     companion object {
