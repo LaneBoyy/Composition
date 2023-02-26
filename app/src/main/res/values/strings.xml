@@ -9,7 +9,6 @@
     <string name="text_normal_lvl">Средний</string>
     <string name="text_hard_lvl">Тяжелый</string>
     <string name="question_mark">\?</string>
-    <string name="counter_right_answers_text">Правильных ответов %s (минимум %s)</string>
     <string name="text_count_of_needs_answers">Необходимое количество правильных ответов: %s</string>
     <string name="text_your_score">Ваш счет:\n%s</string>
     <string name="text_need_percent">Необходимый процент правильных ответов: %s</string>
